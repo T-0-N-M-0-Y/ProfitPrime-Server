@@ -29,7 +29,7 @@ async function run() {
     const logosCollection = client
       .db("profitPrimeDB")
       .collection("companyLogos");
-    // users API
+    // users API-----------------
     app.get("/users", async (req, res) => {
       const result = await usersCollection.find().toArray();
       res.send(result);
@@ -47,7 +47,7 @@ async function run() {
       const result = await usersCollection.insertOne(user);
       res.send(result);
     });
-    // Reviews API
+    // Reviews API----------------
     app.get("/reviews", async (req, res) => {
       const result = await reviewsCollection.find().toArray();
       res.send(result);
@@ -57,12 +57,32 @@ async function run() {
       const result = await reviewsCollection.insertOne(review);
       res.send(result);
     });
-    // Company Logo API
+    // Company Logo API-----------
     app.get("/companyLogos", async (req, res) => {
       const result = await logosCollection.find().toArray();
       res.send(result);
     });
-    // Payment Related API
+    // Admin
+    app.patch("/users/admin/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          role: "admin",
+        },
+      };
+      const result = await usersCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
+
+    // Verify admin by email
+    app.get("/users/admin/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await usersCollection.findOne(query);
+      const result = { admin: user?.role === "admin" };
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
@@ -82,7 +102,3 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log(`ProfitPrime is running on port ${port}`);
 });
-
-// ---------
-// pass: X7tAtTDxYbp6Baca
-// profit-prime
