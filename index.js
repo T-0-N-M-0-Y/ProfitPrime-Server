@@ -4,6 +4,8 @@ const cors = require("cors");
 require("dotenv").config();
 const port = process.env.PORT || 5000;
 
+const stripe = require('stripe')(process.env.PAYMENT_SECRET_KEY);
+
 // //All  middleware here
 app.use(cors());
 app.use(express.json());
@@ -47,6 +49,26 @@ async function run() {
       const result = await usersCollection.insertOne(user);
       res.send(result);
     });
+    app.post('/update-user', async (req, res) => {
+      const { email, userRole } = req.body;
+
+      try {
+        // Find the user by email and update their role
+        const query = { email };
+        const update = { $set: { userRole } };
+        const result = await usersCollection.updateOne(query, update);
+
+        if (result.modifiedCount === 1) {
+          res.send({ message: 'User role updated successfully' });
+        } else {
+          res.status(400).send({ message: 'User not found or role not updated' });
+        }
+      } catch (error) {
+        console.error('Error updating user role:', error);
+        res.status(500).send({ message: 'An error occurred while updating user role' });
+      }
+    });
+
     // Reviews API----------------
     app.get("/reviews", async (req, res) => {
       const result = await reviewsCollection.find().toArray();
@@ -83,6 +105,21 @@ async function run() {
       const result = { admin: user?.role === "admin" };
       res.send(result);
     });
+    
+    // Payment Related API
+    app.post('/create-payment-intent', async (req, res) => {
+      const { price } = req.body;
+      const amount = parseInt(price * 100);
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: amount,
+        currency: 'usd',
+        payment_method_types: ['card']
+      });
+
+      res.send({
+        clientSecret: paymentIntent.client_secret
+      })
+    })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
