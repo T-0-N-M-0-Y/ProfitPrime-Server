@@ -31,6 +31,18 @@ async function run() {
     const logosCollection = client
       .db("profitPrimeDB")
       .collection("companyLogos");
+    const businessRevenueCollection = client
+      .db("profitPrimeDB")
+      .collection("businessRevenue");
+    const productConsultingCollection = client
+      .db("profitPrimeDB")
+      .collection("productConsulting");
+    const consultingRevenueCollection = client
+      .db("profitPrimeDB")
+      .collection("consultingRevenue");
+    const revenueChartCollection = client
+      .db("profitPrimeDB")
+      .collection("revenueChart");
     // users API-----------------
     app.get("/users", async (req, res) => {
       const result = await usersCollection.find().toArray();
@@ -87,7 +99,26 @@ async function run() {
           .send({ message: "An error occurred while updating user role" });
       }
     });
-
+    // BusinessRevenue API
+    app.get("/businessRevenue", async (req, res) => {
+      const result = await businessRevenueCollection.find().toArray();
+      res.send(result);
+    });
+    // ProductConsulting API
+    app.get("/productConsulting", async (req, res) => {
+      const result = await productConsultingCollection.find().toArray();
+      res.send(result);
+    });
+    // RevenueChart API
+    app.get("/revenueChart", async (req, res) => {
+      const result = await revenueChartCollection.find().toArray();
+      res.send(result);
+    });
+    // ConsultingRevenue
+    app.get("/consultingRevenue", async (req, res) => {
+      const result = await consultingRevenueCollection.find().toArray();
+      res.send(result);
+    });
     // Reviews API----------------
     app.get("/reviews", async (req, res) => {
       const result = await reviewsCollection.find().toArray();
