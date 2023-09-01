@@ -28,6 +28,7 @@ async function run() {
     // All Collections
     const usersCollection = client.db("profitPrimeDB").collection("users");
     const reviewsCollection = client.db("profitPrimeDB").collection("reviews");
+    const PaymentCollection = client.db("profitPrimeDB").collection("payment");
     const logosCollection = client
       .db("profitPrimeDB")
       .collection("companyLogos");
@@ -46,6 +47,14 @@ async function run() {
     // users API-----------------
     app.get("/users", async (req, res) => {
       const result = await usersCollection.find().toArray();
+      res.send(result);
+    });
+    //aft
+    app.get("/user/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      // console.log(query);
+      const result = await usersCollection.findOne(query);
       res.send(result);
     });
 
@@ -169,6 +178,27 @@ async function run() {
       res.send({
         clientSecret: paymentIntent.client_secret,
       });
+    });
+    //Payment history
+    app.post('/payments', async (req, res) => {
+      const payment = req.body;
+      const insertResult = await PaymentCollection.insertOne(payment);
+      // console.log(payment);
+
+      res.send(insertResult);
+    })
+
+    app.get('/payment-history/:email', async (req, res) => {
+      try {
+        const email = req.params.email;
+        const query = { email: email };
+        // console.log(query);
+        const payments = await PaymentCollection.find(query).toArray(); // Use find and toArray
+        res.json(payments);
+      } catch (error) {
+        console.error('Error fetching payment records:', error);
+        res.status(500).json({ error: 'Internal server error' });
+      }
     });
 
     // Send a ping to confirm a successful connection
