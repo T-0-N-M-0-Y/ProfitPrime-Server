@@ -180,15 +180,15 @@ async function run() {
       });
     });
     //Payment history
-    app.post('/payments', async (req, res) => {
+    app.post("/payments", async (req, res) => {
       const payment = req.body;
       const insertResult = await PaymentCollection.insertOne(payment);
       // console.log(payment);
 
       res.send(insertResult);
-    })
+    });
 
-    app.get('/payment-history/:email', async (req, res) => {
+    app.get("/payment-history/:email", async (req, res) => {
       try {
         const email = req.params.email;
         const query = { email: email };
@@ -196,8 +196,8 @@ async function run() {
         const payments = await PaymentCollection.find(query).toArray(); // Use find and toArray
         res.json(payments);
       } catch (error) {
-        console.error('Error fetching payment records:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error("Error fetching payment records:", error);
+        res.status(500).json({ error: "Internal server error" });
       }
     });
 
