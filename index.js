@@ -70,7 +70,19 @@ async function run() {
       const result = await usersCollection.insertOne(user);
       res.send(result);
     });
+    app.patch("/users/feedback/:id", async (req, res) => {
+      const id = req.params.id;
+      const body = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          feedback: body.feedback,
+        },
+      };
 
+      const result = await usersCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
     // Get Prime users
     app.get("/users/prime", async (req, res) => {
       const query = { userRole: "Prime" };
@@ -109,12 +121,12 @@ async function run() {
       }
     });
     app.post("/update-user-info", async (req, res) => {
-      const { email, category, contact,website,address } = req.body;
+      const { email, category, contact, website, address } = req.body;
 
       try {
         // Find the user by email and update their role
         const query = { email };
-        const update = { $set: { contact, website,address,category }  };
+        const update = { $set: { contact, website, address, category } };
         const result = await usersCollection.updateOne(query, update);
 
         if (result.modifiedCount === 1) {
