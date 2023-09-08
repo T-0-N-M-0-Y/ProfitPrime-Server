@@ -109,12 +109,12 @@ async function run() {
       }
     });
     app.post("/update-user-info", async (req, res) => {
-      const { email, category, contact, website, address } = req.body;
+      const { email, category, contact, website, address,name } = req.body;
 
       try {
         // Find the user by email and update their role
         const query = { email };
-        const update = { $set: { contact, website, address, category } };
+        const update = { $set: { contact, website, address, category,name } };
         const result = await usersCollection.updateOne(query, update);
 
         if (result.modifiedCount === 1) {
