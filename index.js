@@ -118,17 +118,17 @@ async function run() {
         const result = await usersCollection.updateOne(query, update);
 
         if (result.modifiedCount === 1) {
-          res.send({ message: "User role updated successfully" });
+          res.send({ message: "User updated successfully" });
         } else {
           res
             .status(400)
-            .send({ message: "User not found or role not updated" });
+            .send({ message: "User not found or  not updated" });
         }
       } catch (error) {
-        console.error("Error updating user role:", error);
+        console.error("Error updating user :", error);
         res
           .status(500)
-          .send({ message: "An error occurred while updating user role" });
+          .send({ message: "An error occurred while updating user " });
       }
     });
     // BusinessRevenue API
